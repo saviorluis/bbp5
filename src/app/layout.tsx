@@ -2,8 +2,8 @@ import type { Metadata, Viewport } from "next";
 import { Montserrat } from "next/font/google";
 import "./globals.css";
 import ClientBody from "./ClientBody";
-import Header from "@/components/Header"; // Added Header component
-import Footer from "@/components/Footer"; // Added Footer component
+import Header from "../components/Header"; // Added Header component
+import Footer from "../components/Footer"; // Added Footer component
 
 const montserrat = Montserrat({
   subsets: ["latin"],
