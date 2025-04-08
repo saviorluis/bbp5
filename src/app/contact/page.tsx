@@ -1,10 +1,10 @@
 import { Metadata } from "next";
 import Link from "next/link";
 import Image from "next/image";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
-import { Label } from "@/components/ui/label";
+import { Button } from "../../components/ui/button";
+import { Input } from "../../components/ui/input";
+import { Textarea } from "../../components/ui/textarea";
+import { Label } from "../../components/ui/label";
 import { Phone, Mail, MapPin, Clock } from "lucide-react";
 
 export const metadata: Metadata = {
