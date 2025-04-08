@@ -1,7 +1,7 @@
 import { Metadata } from "next";
 import Link from "next/link";
 import Image from "next/image";
-import { Button } from "@/components/ui/button";
+import { Button } from "../../components/ui/button";
 
 export const metadata: Metadata = {
   title: "Services & Solutions | Big Brother Property Solutions",
