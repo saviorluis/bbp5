@@ -3,8 +3,8 @@
 import Link from "next/link";
 import Image from "next/image";
 import { useState, useEffect } from "react";
-import { Button } from "@/components/ui/button";
-import { Sheet, SheetTrigger, SheetContent } from "@/components/ui/sheet";
+import { Button } from "./ui/button";
+import { Sheet, SheetTrigger, SheetContent } from "./ui/sheet";
 import { Menu, X, Phone } from "lucide-react";
 
 const Header = () => {
