@@ -111,15 +111,52 @@ export default function SolutionsPage() {
           />
           
           <ServiceCard 
-            title="Janitorial Services" 
-            description="From apartments to hotels, we specialize in making every property spotless and sparkling clean. We understand the importance of creating a clean and comfortable environment for our clients."
-            imageUrl="/images/services-janitorial.jpg"
+            title="Industrial Equipment" 
+            description="Specialized cleaning for industrial machinery and equipment to ensure optimal performance, extend equipment lifespan, and maintain safe operating conditions."
+            imageUrl="/images/services-commercial.jpg"
           />
         </div>
         
         <div className="text-center mt-8">
           <Button asChild variant="outline" className="border-accent text-accent hover:bg-accent hover:text-white">
             <Link href="/get-quote?service=industrial">Get Industrial Quote</Link>
+          </Button>
+        </div>
+      </section>
+      
+      {/* Janitorial Services Section */}
+      <section className="mb-16">
+        <div className="bg-purple-600/10 p-6 rounded-lg mb-8">
+          <h2 className="text-3xl font-bold mb-4 text-purple-600">Janitorial Services</h2>
+          <p className="text-lg mb-4">
+            Our professional janitorial services maintain clean, healthy, and safe environments for various facilities with specialized protocols for each industry.
+            We provide regular scheduled maintenance with trained staff and state-of-the-art equipment.
+          </p>
+        </div>
+        
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          <ServiceCard 
+            title="Medical Facilities" 
+            description="Specialized cleaning protocols for healthcare environments including hospitals, clinics, and medical offices with strict adherence to infection control standards, proper handling of biohazards, and EPA-registered disinfectants."
+            imageUrl="/images/services-janitorial.jpg"
+          />
+          
+          <ServiceCard 
+            title="Educational Institutions" 
+            description="Comprehensive cleaning for schools, colleges, and universities with focus on high-touch surfaces, classroom sanitization, and maintaining healthy learning environments while working around academic schedules."
+            imageUrl="/images/services-office.jpg"
+          />
+          
+          <ServiceCard 
+            title="Commercial Complexes" 
+            description="Professional cleaning services for shopping malls, large retail centers, and multi-tenant buildings with high-volume foot traffic, featuring specialized floor care, public restroom maintenance, and common area cleaning."
+            imageUrl="/images/services-janitorial.jpg"
+          />
+        </div>
+        
+        <div className="text-center mt-8">
+          <Button asChild variant="outline" className="border-purple-600 text-purple-600 hover:bg-purple-600 hover:text-white">
+            <Link href="/get-quote?service=janitorial">Get Janitorial Services Quote</Link>
           </Button>
         </div>
       </section>
