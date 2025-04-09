@@ -10,11 +10,35 @@ mkdir -p out
 
 # Use Next.js to generate a static export
 echo "Generating static export..."
-node_modules/.bin/next build && node_modules/.bin/next export -o out
+node_modules/.bin/next build
 
-# If the export fails, create a basic static site
-if [ $? -ne 0 ]; then
-  echo "Next.js export failed, creating fallback static site..."
+# Check if the build directory exists and copy it to out
+if [ -d ".next/static" ]; then
+  echo "Build successful, copying to out directory..."
+  cp -R .next/static out/
+  cp -R .next/server/app out/app
+  cp -R .next/server/pages out/pages
+  
+  # Create a basic index.html to ensure something is available
+  if [ ! -f "out/index.html" ]; then
+    echo "Creating index.html..."
+    cat > out/index.html << 'EOL'
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="refresh" content="0;url=app/">
+  <title>Beyond Bespoke Professional Services</title>
+</head>
+<body>
+  <p>Redirecting to <a href="app/">homepage</a>...</p>
+</body>
+</html>
+EOL
+  fi
+else
+  echo "Next.js build failed, creating fallback static site..."
   # Create a basic index.html
   cat > out/index.html << 'EOL'
 <!DOCTYPE html>

@@ -50,8 +50,6 @@ const nextConfig = {
   // Experimental features
   experimental: {
     optimizePackageImports: ['lucide-react'],
-    // These options help with static exports
-    serverActions: false,
   },
   
   // Output static files for deployment
