@@ -43,7 +43,7 @@ const nextConfig = {
     optimizePackageImports: ['lucide-react'],
   },
   // Output configuration for Vercel deployment
-  output: 'standalone',
+  output: 'export',
   distDir: '.next',
   poweredByHeader: false,
 };

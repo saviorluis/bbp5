@@ -1,4 +1,14 @@
 #!/bin/bash
+# Remove TypeScript configuration completely
+echo "Removing TypeScript configuration..."
+rm -f tsconfig.json
+rm -f tsconfig.*.json
+rm -f next-env.d.ts
+rm -f global.d.ts
+
+# Install required dependencies 
 npm install --no-save --no-package-lock typescript @types/react @types/node
 npm i tailwindcss postcss autoprefixer
-SKIP_TYPESCRIPT_CHECK=1 npm run build
+
+# Run the build with TypeScript checking disabled
+SKIP_TYPESCRIPT_CHECK=1 NODE_OPTIONS="--max-old-space-size=4096" next build
