@@ -31,8 +31,8 @@ export default function SolutionsPage() {
           />
           
           <ServiceCard 
-            title="Commercial Spaces" 
-            description="We specialize in commercial properties and understand the importance of maintaining a clean and professional appearance for your business."
+            title="Restaurants" 
+            description="Specialized cleaning for food service establishments including deep kitchen cleaning, hood and vent degreasing, grease trap maintenance, pressure washing for grease spills, and front-of-house sanitization to maintain health code compliance."
             imageUrl="/images/services-commercial.jpg"
           />
           
