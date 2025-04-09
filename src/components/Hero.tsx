@@ -42,7 +42,7 @@ const Hero = () => {
         <div className="container mx-auto flex flex-col h-full justify-center px-4 md:px-8">
           <div className="max-w-xl md:max-w-2xl lg:max-w-3xl">
             <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-white leading-tight mb-4 sm:mb-6">
-              Creating space for innovation to flourish.
+              Your Property, Our Priority: Making First Impressions Last
             </h1>
             <p className="text-lg sm:text-xl text-white mb-6 sm:mb-10 max-w-md sm:max-w-lg">
               Servicing Experienced & Reliable Builders inc. since 1978
