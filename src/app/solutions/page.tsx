@@ -55,15 +55,15 @@ export default function SolutionsPage() {
         <div className="bg-primary/10 p-6 rounded-lg mb-8">
           <h2 className="text-3xl font-bold mb-4 text-primary">Residential Services</h2>
           <p className="text-lg mb-4">
-            From regular home cleaning to specialized services, we'll keep your living space pristine and comfortable.
-            Our residential cleaning solutions are tailored to your specific needs.
+            From exterior cleaning to specialized services, we'll keep your home looking pristine and well-maintained.
+            Our residential cleaning solutions are tailored to your property's specific needs.
           </p>
         </div>
         
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           <ServiceCard 
-            title="Home Cleaning" 
-            description="Professional and experienced cleaners provide the highest level of service for residential properties, ensuring your home is clean and comfortable."
+            title="Exterior Home Cleaning" 
+            description="Revitalize your home's exterior with our comprehensive cleaning services including soft washing for siding, roof cleaning, gutter cleaning, window washing, and pressure washing for driveways, walkways, and patios."
             imageUrl="/images/services-residential.jpg"
           />
           
