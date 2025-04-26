@@ -22,13 +22,7 @@ import {
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
-import dynamic from 'next/dynamic';
-
-// Dynamically import the estimator components
-const EmbeddableEstimator = dynamic(() => import('./estimator/EmbeddableEstimator'), {
-  loading: () => <p>Loading estimator...</p>,
-  ssr: false
-});
+import EmbeddableEstimator from './estimator/EmbeddableEstimator';
 
 // Let's create a form schema with validation
 const formSchema = z.object({
