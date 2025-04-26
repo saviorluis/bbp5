@@ -28,7 +28,7 @@ const Hero = () => {
             alt="Big Brother Property Solutions Logo"
             width={375}
             height={180}
-            className="h-auto w-72 sm:w-90 md:w-108 lg:w-120"
+            className="h-auto w-48 sm:w-72 md:w-90 lg:w-120"
             style={{ 
               objectFit: 'contain',
               mixBlendMode: 'screen'

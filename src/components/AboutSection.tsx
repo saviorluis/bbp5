@@ -26,14 +26,16 @@ const AboutSection = () => {
             <div className="relative h-[250px] sm:h-[300px] md:h-[350px] lg:h-[400px] rounded-lg overflow-hidden shadow-md">
               {/* Mobile Logo */}
               <div className="block md:hidden w-full h-full relative">
-                <Image
-                  src="/images/bbps-logo2.jpg"
-                  alt="Big Brother Property Solutions Logo"
-                  fill
-                  sizes="100vw"
-                  className="object-contain p-8"
-                  priority
-                />
+                <div className="w-full h-full flex items-center justify-center p-8">
+                  <Image
+                    src="/images/bbps-logo2.jpg"
+                    alt="Big Brother Property Solutions Logo"
+                    width={200}
+                    height={100}
+                    className="max-w-[180px] w-auto h-auto object-contain"
+                    priority
+                  />
+                </div>
               </div>
               {/* Desktop Window Cleaning Image */}
               <div className="hidden md:block w-full h-full">
