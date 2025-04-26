@@ -71,7 +71,8 @@ const QuoteForm = () => {
   useEffect(() => {
     if (serviceType) {
       setSelectedServiceType(serviceType);
-      setShowEstimator(serviceType === "commercial" || serviceType === "residential");
+      // Show estimator for any service type, not just commercial and residential
+      setShowEstimator(true);
     } else {
       setShowEstimator(false);
     }
