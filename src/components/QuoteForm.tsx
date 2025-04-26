@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "./ui/button";
 import { Input } from "./ui/input";
 import { Textarea } from "./ui/textarea";
@@ -22,6 +22,13 @@ import {
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
+import dynamic from 'next/dynamic';
+
+// Dynamically import the estimator components
+const EmbeddableEstimator = dynamic(() => import('./estimator/EmbeddableEstimator'), {
+  loading: () => <p>Loading estimator...</p>,
+  ssr: false
+});
 
 // Let's create a form schema with validation
 const formSchema = z.object({
@@ -32,6 +39,7 @@ const formSchema = z.object({
     required_error: "Please select a service type",
   }),
   message: z.string().min(5, { message: "Message must be at least 5 characters" }),
+  estimateDetails: z.string().optional(),
 });
 
 type FormValues = z.infer<typeof formSchema>;
@@ -40,6 +48,9 @@ const QuoteForm = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [selectedServiceType, setSelectedServiceType] = useState<string | null>(null);
+  const [showEstimator, setShowEstimator] = useState(false);
+  const [estimateResult, setEstimateResult] = useState<any>(null);
 
   // Initialize the form
   const form = useForm<FormValues>({
@@ -50,8 +61,229 @@ const QuoteForm = () => {
       phone: "",
       serviceType: "",
       message: "",
+      estimateDetails: "",
     },
   });
+
+  // Watch for changes to service type
+  const serviceType = form.watch("serviceType");
+  
+  useEffect(() => {
+    if (serviceType) {
+      setSelectedServiceType(serviceType);
+      setShowEstimator(serviceType === "commercial" || serviceType === "residential");
+    } else {
+      setShowEstimator(false);
+    }
+  }, [serviceType]);
+
+  // Handle estimate calculation completion
+  const handleEstimateCalculated = (estimateData: any) => {
+    setEstimateResult(estimateData);
+    form.setValue("estimateDetails", JSON.stringify(estimateData));
+  };
+
+  // Generate CSV data from estimate
+  const generateCSV = () => {
+    if (!estimateResult) return null;
+    
+    const headers = ['Category', 'Value'];
+    const rows = [
+      ['Service Type', estimateResult.serviceType === 'commercial' ? 'Commercial Cleaning' : 'Residential Cleaning'],
+      ['Total Cost', `$${estimateResult.totalCost.toFixed(2)}`],
+      ['Square Footage', estimateResult.squareFootage],
+      ['Time Estimate', estimateResult.timeEstimate],
+    ];
+    
+    // Add specific details based on service type
+    if (estimateResult.serviceType === 'commercial') {
+      rows.push(
+        ['Project Type', estimateResult.projectType],
+        ['Cleaning Type', estimateResult.cleaningType],
+        ['VCT Flooring', estimateResult.details.vctFlooring ? 'Yes' : 'No'],
+        ['Regular Windows', estimateResult.details.windowCount],
+        ['Large Windows', estimateResult.details.largeWindowCount],
+        ['Team Size', estimateResult.details.teamSize]
+      );
+    } else {
+      rows.push(
+        ['Home Type', estimateResult.homeType],
+        ['Cleaning Type', estimateResult.cleaningType],
+        ['Bedrooms', estimateResult.details.bedrooms],
+        ['Bathrooms', estimateResult.details.bathrooms],
+        ['Carpet Cleaning', estimateResult.details.extras.carpet ? 'Yes' : 'No'],
+        ['Deep Clean Kitchen', estimateResult.details.extras.deepCleanKitchen ? 'Yes' : 'No'],
+        ['Deep Clean Bathrooms', estimateResult.details.extras.deepCleanBathrooms ? 'Yes' : 'No'],
+        ['Window Cleaning', estimateResult.details.extras.windows ? 'Yes' : 'No'],
+        ['Appliance Cleaning', estimateResult.details.extras.appliances ? 'Yes' : 'No']
+      );
+    }
+    
+    // Format as CSV
+    const csvContent = [
+      headers.join(','),
+      ...rows.map(row => row.join(','))
+    ].join('\n');
+    
+    return csvContent;
+  };
+
+  // Download the estimate as CSV
+  const downloadCSV = () => {
+    const csvContent = generateCSV();
+    if (!csvContent) return;
+    
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const link = document.createElement('a');
+    
+    // Create a URL for the blob
+    const url = URL.createObjectURL(blob);
+    link.setAttribute('href', url);
+    link.setAttribute('download', `BBPS_Cleaning_Estimate_${Date.now()}.csv`);
+    link.style.visibility = 'hidden';
+    
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
+  
+  // Generate printable HTML for the estimate
+  const printEstimate = () => {
+    if (!estimateResult) return;
+    
+    // Create a new window
+    const printWindow = window.open('', '_blank');
+    if (!printWindow) {
+      alert('Please allow pop-ups to print your estimate');
+      return;
+    }
+    
+    // Prepare the HTML content
+    const html = `
+      <!DOCTYPE html>
+      <html>
+      <head>
+        <title>BBPS Cleaning Estimate</title>
+        <style>
+          body { font-family: Arial, sans-serif; margin: 20px; }
+          .header { text-align: center; margin-bottom: 30px; }
+          .header h1 { color: #1a56db; margin-bottom: 5px; }
+          .header p { color: #6b7280; }
+          .estimate-details { border: 1px solid #e5e7eb; border-radius: 8px; padding: 20px; margin-bottom: 20px; }
+          .estimate-row { display: flex; margin-bottom: 10px; }
+          .estimate-label { flex: 1; font-weight: 600; color: #374151; }
+          .estimate-value { flex: 1; color: #4b5563; }
+          .total-cost { font-size: 22px; font-weight: bold; margin-top: 20px; text-align: right; color: #1a56db; }
+          .footer { margin-top: 40px; text-align: center; font-size: 12px; color: #6b7280; }
+          .contact-info { margin-top: 30px; text-align: center; }
+        </style>
+      </head>
+      <body>
+        <div class="header">
+          <h1>Big Brother Property Solutions</h1>
+          <p>Cleaning Service Estimate</p>
+        </div>
+        
+        <div class="estimate-details">
+          <div class="estimate-row">
+            <div class="estimate-label">Service Type:</div>
+            <div class="estimate-value">${estimateResult.serviceType === 'commercial' ? 'Commercial Cleaning' : 'Residential Cleaning'}</div>
+          </div>
+          
+          <div class="estimate-row">
+            <div class="estimate-label">Square Footage:</div>
+            <div class="estimate-value">${estimateResult.squareFootage} sq ft</div>
+          </div>
+          
+          <div class="estimate-row">
+            <div class="estimate-label">Estimated Time:</div>
+            <div class="estimate-value">${estimateResult.timeEstimate}</div>
+          </div>
+          
+          ${estimateResult.serviceType === 'commercial' ? `
+            <div class="estimate-row">
+              <div class="estimate-label">Project Type:</div>
+              <div class="estimate-value">${estimateResult.projectType}</div>
+            </div>
+            
+            <div class="estimate-row">
+              <div class="estimate-label">Cleaning Type:</div>
+              <div class="estimate-value">${estimateResult.cleaningType}</div>
+            </div>
+            
+            <div class="estimate-row">
+              <div class="estimate-label">VCT Flooring:</div>
+              <div class="estimate-value">${estimateResult.details.vctFlooring ? 'Yes' : 'No'}</div>
+            </div>
+            
+            <div class="estimate-row">
+              <div class="estimate-label">Regular Windows:</div>
+              <div class="estimate-value">${estimateResult.details.windowCount}</div>
+            </div>
+            
+            <div class="estimate-row">
+              <div class="estimate-label">Large Windows:</div>
+              <div class="estimate-value">${estimateResult.details.largeWindowCount}</div>
+            </div>
+          ` : `
+            <div class="estimate-row">
+              <div class="estimate-label">Home Type:</div>
+              <div class="estimate-value">${estimateResult.homeType}</div>
+            </div>
+            
+            <div class="estimate-row">
+              <div class="estimate-label">Cleaning Type:</div>
+              <div class="estimate-value">${estimateResult.cleaningType}</div>
+            </div>
+            
+            <div class="estimate-row">
+              <div class="estimate-label">Bedrooms:</div>
+              <div class="estimate-value">${estimateResult.details.bedrooms}</div>
+            </div>
+            
+            <div class="estimate-row">
+              <div class="estimate-label">Bathrooms:</div>
+              <div class="estimate-value">${estimateResult.details.bathrooms}</div>
+            </div>
+            
+            <div class="estimate-row">
+              <div class="estimate-label">Additional Services:</div>
+              <div class="estimate-value">
+                ${estimateResult.details.extras.carpet ? 'Carpet Cleaning<br>' : ''}
+                ${estimateResult.details.extras.deepCleanKitchen ? 'Deep Clean Kitchen<br>' : ''}
+                ${estimateResult.details.extras.deepCleanBathrooms ? 'Deep Clean Bathrooms<br>' : ''}
+                ${estimateResult.details.extras.windows ? 'Window Cleaning<br>' : ''}
+                ${estimateResult.details.extras.appliances ? 'Appliance Cleaning' : ''}
+              </div>
+            </div>
+          `}
+          
+          <div class="total-cost">
+            Total Estimated Cost: $${estimateResult.totalCost.toFixed(2)}
+          </div>
+        </div>
+        
+        <div class="contact-info">
+          <p>For questions or to schedule your cleaning service, please contact us at:</p>
+          <p><strong>Phone:</strong> (123) 456-7890  |  <strong>Email:</strong> info@bbpscleaning.com</p>
+        </div>
+        
+        <div class="footer">
+          <p>This is an estimate based on the information provided. Final pricing may vary based on actual conditions.</p>
+          <p>Estimate generated on ${new Date().toLocaleDateString()}</p>
+        </div>
+        
+        <script>
+          window.onload = function() { window.print(); }
+        </script>
+      </body>
+      </html>
+    `;
+    
+    // Write to the new window and print
+    printWindow.document.write(html);
+    printWindow.document.close();
+  };
 
   // Handle form submission
   const onSubmit = async (data: FormValues) => {
@@ -66,8 +298,10 @@ const QuoteForm = () => {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          formType: 'quote',
+          formType: data.serviceType === 'residential' ? 'residentialQuote' : 
+                  data.serviceType === 'commercial' ? 'commercialQuote' : 'quote',
           ...data,
+          estimateDetails: estimateResult ? estimateResult : undefined,
         }),
       });
       
@@ -76,6 +310,8 @@ const QuoteForm = () => {
       if (result.success) {
         setIsSuccess(true);
         form.reset();
+        setEstimateResult(null);
+        setShowEstimator(false);
         
         // Reset success message after 5 seconds
         setTimeout(() => {
@@ -180,9 +416,9 @@ const QuoteForm = () => {
                           </SelectTrigger>
                         </FormControl>
                         <SelectContent>
-                          <SelectItem value="janitorial">Janitorial Cleaning</SelectItem>
                           <SelectItem value="residential">Residential Cleaning</SelectItem>
                           <SelectItem value="commercial">Commercial Cleaning</SelectItem>
+                          <SelectItem value="janitorial">Janitorial Cleaning</SelectItem>
                           <SelectItem value="office">Office Cleaning</SelectItem>
                           <SelectItem value="airbnb">Airbnb Cleaning</SelectItem>
                           <SelectItem value="post-construction">Post Construction Cleaning</SelectItem>
@@ -193,6 +429,71 @@ const QuoteForm = () => {
                   )}
                 />
               </div>
+
+              {showEstimator && (
+                <div className="bg-white p-6 rounded-lg border border-gray-200 mb-6">
+                  <h3 className="text-lg font-medium mb-4">Calculate Your Estimate</h3>
+                  <EmbeddableEstimator 
+                    initialTab={selectedServiceType === "commercial" ? "commercial" : "residential"}
+                    showTitle={false}
+                    onEstimateCalculated={handleEstimateCalculated}
+                    theme={{
+                      primary: "blue",
+                      secondary: "gray",
+                      accent: "white",
+                      background: "white",
+                    }}
+                  />
+                  
+                  {estimateResult && (
+                    <div className="mt-4">
+                      <div className="p-4 mb-4 bg-blue-50 rounded-md">
+                        <h4 className="font-medium text-blue-700 mb-2">Estimate Summary</h4>
+                        <div className="grid grid-cols-2 gap-2">
+                          <p className="text-sm">Estimated cost:</p>
+                          <p className="text-sm font-bold">${estimateResult.totalCost.toFixed(2)}</p>
+                          {estimateResult.squareFootage && (
+                            <>
+                              <p className="text-sm">Square footage:</p>
+                              <p className="text-sm">{estimateResult.squareFootage} sq ft</p>
+                            </>
+                          )}
+                          {estimateResult.timeEstimate && (
+                            <>
+                              <p className="text-sm">Estimated time:</p>
+                              <p className="text-sm">{estimateResult.timeEstimate}</p>
+                            </>
+                          )}
+                        </div>
+                      </div>
+                      
+                      <div className="flex flex-wrap gap-3">
+                        <Button 
+                          type="button" 
+                          variant="outline" 
+                          size="sm"
+                          onClick={downloadCSV}
+                          className="text-xs"
+                        >
+                          Download as CSV
+                        </Button>
+                        <Button 
+                          type="button" 
+                          variant="outline" 
+                          size="sm"
+                          onClick={printEstimate}
+                          className="text-xs"
+                        >
+                          Print Estimate
+                        </Button>
+                        <p className="text-xs text-gray-500 w-full mt-2">
+                          Save or print your estimate for your records.
+                        </p>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              )}
 
               <FormField
                 control={form.control}
