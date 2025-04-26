@@ -39,6 +39,7 @@ type FormValues = z.infer<typeof formSchema>;
 const QuoteForm = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
   // Initialize the form
   const form = useForm<FormValues>({
@@ -55,19 +56,40 @@ const QuoteForm = () => {
   // Handle form submission
   const onSubmit = async (data: FormValues) => {
     setIsSubmitting(true);
-    // Here you would typically send the data to your backend API
-    // This is just a simulation
-    setTimeout(() => {
-      console.log("Form data:", data);
+    setErrorMessage(null);
+    
+    try {
+      // Submit the form data to our n8n API endpoint
+      const response = await fetch('/api/forms', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          formType: 'quote',
+          ...data,
+        }),
+      });
+      
+      const result = await response.json();
+      
+      if (result.success) {
+        setIsSuccess(true);
+        form.reset();
+        
+        // Reset success message after 5 seconds
+        setTimeout(() => {
+          setIsSuccess(false);
+        }, 5000);
+      } else {
+        setErrorMessage(result.message || 'There was an error submitting your request. Please try again.');
+      }
+    } catch (error) {
+      console.error('Error submitting form:', error);
+      setErrorMessage('There was an error connecting to the server. Please try again later.');
+    } finally {
       setIsSubmitting(false);
-      setIsSuccess(true);
-      form.reset();
-
-      // Reset success message after 5 seconds
-      setTimeout(() => {
-        setIsSuccess(false);
-      }, 5000);
-    }, 1500);
+    }
   };
 
   return (
@@ -81,12 +103,19 @@ const QuoteForm = () => {
             </p>
           </div>
 
-          {isSuccess ? (
+          {isSuccess && (
             <div className="bg-green-50 border border-green-200 text-green-700 px-4 py-3 rounded relative mb-6" role="alert">
               <strong className="font-bold">Thank you! </strong>
               <span className="block sm:inline">Your quote request has been submitted successfully. We'll be in touch soon.</span>
             </div>
-          ) : null}
+          )}
+
+          {errorMessage && (
+            <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded relative mb-6" role="alert">
+              <strong className="font-bold">Error: </strong>
+              <span className="block sm:inline">{errorMessage}</span>
+            </div>
+          )}
 
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
