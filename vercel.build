@@ -1,0 +1,4 @@
+#!/bin/bash
+npm i tailwindcss postcss autoprefixer
+npm i --save-dev typescript @types/react @types/node
+npm run build

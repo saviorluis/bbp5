@@ -1,0 +1,12 @@
+To resolve the build issues, follow these steps: 
+
+1. Update next.config.js to enable static exports and proper path aliasing.
+2. Create simplified versions of error pages that don't rely on UI components.
+3. Setup proper jsconfig.json and tsconfig.json for path aliasing.
+
+Key change is to remove dependencies on @/components/ui/button and other UI components by:
+- Using native HTML elements with tailwind classes directly
+- Setting the output to 'export' mode to generate static HTML
+- Fixing path aliases in the configuration files
+
+For each error page (404.js, _error.js, etc.) replace UI component imports with simple HTML elements styled with Tailwind CSS. 

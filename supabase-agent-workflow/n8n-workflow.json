@@ -1,0 +1,394 @@
+{
+  "name": "AI Agent with Supabase and RAG",
+  "nodes": [
+    {
+      "parameters": {
+        "path": "/mcp/tool/supabase/:userId",
+        "options": {}
+      },
+      "name": "Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 1,
+      "position": [
+        250,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "mode": "jsonToJson",
+        "jsCode": "// Extract the userId from the path parameter\nconst userId = $node[\"Webhook\"].json.params.userId;\n\n// Get the request data\nconst requestData = $node[\"Webhook\"].json.body;\n\n// Determine the table name based on userId for multi-tenancy\nconst userPrefix = userId.substring(0, 8);\nconst tableMessages = `agent_messages_${userPrefix}`;\nconst tableKnowledge = `agent_knowledge_${userPrefix}`;\nconst tableTasks = `agent_tasks_${userPrefix}`;\nconst tableStatus = `agent_status_${userPrefix}`;\n\n// Create a session ID if not provided\nlet sessionId = requestData.sessionId || $uuid();\n\n// Return the processed data for downstream nodes\nreturn {\n  userId,\n  sessionId,\n  input: requestData.input,\n  context: requestData.context || {},\n  tableNames: {\n    messages: tableMessages,\n    knowledge: tableKnowledge,\n    tasks: tableTasks,\n    status: tableStatus\n  }\n};"
+      },
+      "name": "Process Request",
+      "type": "n8n-nodes-base.function",
+      "typeVersion": 1,
+      "position": [
+        450,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "credentials": "supabaseApi",
+        "operation": "insert",
+        "table": "={{ $node[\"Process Request\"].json.tableNames.messages }}",
+        "additionalFields": {}
+      },
+      "name": "Store User Message",
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        650,
+        150
+      ]
+    },
+    {
+      "parameters": {
+        "credentials": "openAiApi",
+        "text": "={{ $node[\"Process Request\"].json.input }}",
+        "options": {
+          "model": "text-embedding-ada-002"
+        }
+      },
+      "name": "Create Embedding",
+      "type": "n8n-nodes-base.openAi",
+      "typeVersion": 1,
+      "position": [
+        650,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "mode": "jsonToJson",
+        "jsCode": "// Get the embedding from OpenAI\nconst embedding = $node[\"Create Embedding\"].json.data[0].embedding;\n\n// Get user message and context\nconst userMessage = $node[\"Process Request\"].json.input;\nconst tableKnowledge = $node[\"Process Request\"].json.tableNames.knowledge;\nconst userId = $node[\"Process Request\"].json.userId;\n\n// Prepare for similarity search\nreturn {\n  embedding,\n  userMessage,\n  tableKnowledge,\n  userId,\n  // SQL query template for vector similarity search\n  vectorQuery: `\n    SELECT content, title, category\n    FROM ${tableKnowledge}\n    WHERE user_id = '${userId}'\n    ORDER BY content_embedding <=> '[${embedding}]'\n    LIMIT 5\n  `\n};"
+      },
+      "name": "Prepare Vector Search",
+      "type": "n8n-nodes-base.function",
+      "typeVersion": 1,
+      "position": [
+        850,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "credentials": "supabaseApi",
+        "operation": "executeQuery",
+        "query": "={{ $node[\"Prepare Vector Search\"].json.vectorQuery }}"
+      },
+      "name": "RAG Knowledge Search",
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        1050,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "credentials": "supabaseApi",
+        "operation": "select",
+        "table": "={{ $node[\"Process Request\"].json.tableNames.messages }}",
+        "options": {}
+      },
+      "name": "Get Conversation History",
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        1050,
+        150
+      ]
+    },
+    {
+      "parameters": {
+        "mode": "jsonToJson",
+        "jsCode": "// Combine conversation history and knowledge base results\nconst history = $node[\"Get Conversation History\"].json.data.map(msg => ({\n  role: msg.role,\n  content: msg.content\n}));\n\nconst knowledgeResults = $node[\"RAG Knowledge Search\"].json.data;\n\n// Create the system prompt with retrieved knowledge\nlet contextualKnowledge = \"\";\nif (knowledgeResults && knowledgeResults.length > 0) {\n  contextualKnowledge = knowledgeResults.map(item => \n    `${item.title}:\\n${item.content}`\n  ).join('\\n\\n');\n}\n\nconst systemPrompt = {\n  role: \"system\",\n  content: `You are a helpful assistant. Use the following retrieved information to provide accurate answers.\\n\\nRetrieved Knowledge:\\n${contextualKnowledge}`\n};\n\n// Build the messages array for OpenAI\nconst messages = [systemPrompt, ...history];\n\n// Return the prepared context for the AI model\nreturn {\n  messages,\n  userContext: $node[\"Process Request\"].json.context,\n  userId: $node[\"Process Request\"].json.userId,\n  sessionId: $node[\"Process Request\"].json.sessionId,\n  tableNames: $node[\"Process Request\"].json.tableNames\n};"
+      },
+      "name": "Prepare AI Context",
+      "type": "n8n-nodes-base.function",
+      "typeVersion": 1,
+      "position": [
+        1250,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "credentials": "openAiApi",
+        "authentication": "apiKey",
+        "messages": "={{ $node[\"Prepare AI Context\"].json.messages }}",
+        "options": {
+          "model": "gpt-4o",
+          "temperature": 0.7,
+          "maxTokens": 1000
+        }
+      },
+      "name": "Generate Response",
+      "type": "n8n-nodes-base.openAi",
+      "typeVersion": 1,
+      "position": [
+        1450,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "credentials": "supabaseApi",
+        "operation": "insert",
+        "table": "={{ $node[\"Prepare AI Context\"].json.tableNames.messages }}",
+        "additionalFields": {}
+      },
+      "name": "Store AI Response",
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        1650,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "credentials": "supabaseApi",
+        "operation": "upsert",
+        "table": "={{ $node[\"Prepare AI Context\"].json.tableNames.status }}",
+        "additionalFields": {}
+      },
+      "name": "Update Agent Status",
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        1650,
+        150
+      ]
+    },
+    {
+      "parameters": {
+        "mode": "jsonToJson",
+        "jsCode": "// Parse the AI response to check for any task-related content\nconst aiResponse = $node[\"Generate Response\"].json.choices[0].message.content;\nconst userId = $node[\"Prepare AI Context\"].json.userId;\nconst sessionId = $node[\"Prepare AI Context\"].json.sessionId;\n\n// Simple task detection (can be improved with better NLP)\nconst taskRegex = /Task:\\s*([^\\n]+)/gi;\nconst tasks = [];\nlet match;\n\nwhile ((match = taskRegex.exec(aiResponse)) !== null) {\n  tasks.push({\n    title: match[1].trim(),\n    user_id: userId,\n    status: 'pending',\n    created_at: new Date().toISOString()\n  });\n}\n\n// Prepare the final response\nreturn {\n  response: {\n    userId,\n    sessionId,\n    aiResponse,\n    detectedTasks: tasks.length > 0 ? tasks : null,\n    timestamp: new Date().toISOString()\n  },\n  tasks,\n  hasNewTasks: tasks.length > 0,\n  tableNames: $node[\"Prepare AI Context\"].json.tableNames\n};"
+      },
+      "name": "Analyze Response",
+      "type": "n8n-nodes-base.function",
+      "typeVersion": 1,
+      "position": [
+        1850,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "boolean": [
+            {
+              "value1": "={{ $node[\"Analyze Response\"].json.hasNewTasks }}",
+              "value2": true
+            }
+          ]
+        }
+      },
+      "name": "IF Tasks Detected",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 1,
+      "position": [
+        2050,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "credentials": "supabaseApi",
+        "operation": "insert",
+        "table": "={{ $node[\"Analyze Response\"].json.tableNames.tasks }}",
+        "additionalFields": {}
+      },
+      "name": "Create Tasks",
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        2250,
+        200
+      ]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ $node[\"Analyze Response\"].json.response }}"
+      },
+      "name": "HTTP Response",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1,
+      "position": [
+        2450,
+        300
+      ]
+    }
+  ],
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Process Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Process Request": {
+      "main": [
+        [
+          {
+            "node": "Store User Message",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Create Embedding",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create Embedding": {
+      "main": [
+        [
+          {
+            "node": "Prepare Vector Search",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Prepare Vector Search": {
+      "main": [
+        [
+          {
+            "node": "RAG Knowledge Search",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "RAG Knowledge Search": {
+      "main": [
+        [
+          {
+            "node": "Prepare AI Context",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Conversation History": {
+      "main": [
+        [
+          {
+            "node": "Prepare AI Context",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Store User Message": {
+      "main": [
+        [
+          {
+            "node": "Get Conversation History",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Prepare AI Context": {
+      "main": [
+        [
+          {
+            "node": "Generate Response",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Generate Response": {
+      "main": [
+        [
+          {
+            "node": "Store AI Response",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Store AI Response": {
+      "main": [
+        [
+          {
+            "node": "Analyze Response",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update Agent Status": {
+      "main": [
+        [
+          {
+            "node": "Analyze Response",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Analyze Response": {
+      "main": [
+        [
+          {
+            "node": "IF Tasks Detected",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "IF Tasks Detected": {
+      "main": [
+        [
+          {
+            "node": "Create Tasks",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "HTTP Response",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create Tasks": {
+      "main": [
+        [
+          {
+            "node": "HTTP Response",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  }
+} 
