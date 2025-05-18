@@ -1,0 +1,4 @@
+{
+  "buildCommand": "npm install --no-save typescript @types/node && npm run build",
+  "installCommand": "npm install"
+} 

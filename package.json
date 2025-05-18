@@ -8,8 +8,7 @@
     "start": "next start",
     "lint": "next lint",
     "format": "prettier --write .",
-    "export": "next build",
-    "vercel-build": "npm install && npm install --save-dev typescript@5.8.3 @types/node@20.17.47 && next build"
+    "export": "next build"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.0.1",
@@ -18,8 +17,6 @@
     "@radix-ui/react-label": "^2.1.2",
     "@radix-ui/react-select": "^2.1.6",
     "@radix-ui/react-slot": "^1.1.2",
-    "@types/node": "^20.17.47",
-    "typescript": "^5.8.3",
     "autoprefixer": "10.4.21",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
