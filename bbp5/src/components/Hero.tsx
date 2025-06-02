@@ -17,8 +17,8 @@ const Hero = () => {
         }}
       />
 
-      {/* Logo in Bottom Right */}
-      <div className="absolute bottom-[32%] sm:bottom-[30%] md:bottom-[26%] right-[22%] sm:right-[25%] md:right-[27%] z-10">
+      {/* Logo in Bottom Right - Hidden on mobile, visible from md up */}
+      <div className="hidden md:block absolute bottom-[26%] right-[27%] z-10">
         <div className="relative" style={{ 
           filter: 'drop-shadow(0 0 12px rgba(0,0,0,0.9))',
           transform: 'translateZ(0)'
@@ -28,7 +28,7 @@ const Hero = () => {
             alt="Big Brother Property Solutions Logo"
             width={375}
             height={180}
-            className="h-auto w-72 sm:w-90 md:w-108 lg:w-120"
+            className="h-auto w-108 lg:w-120"
             style={{ 
               objectFit: 'contain',
               mixBlendMode: 'screen'
