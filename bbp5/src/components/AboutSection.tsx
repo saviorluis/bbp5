@@ -23,13 +23,18 @@ const AboutSection = () => {
           </div>
 
           <div className="w-full md:w-1/2 mt-6 md:mt-0">
-            <div className="relative h-[250px] sm:h-[300px] md:h-[350px] lg:h-[400px] rounded-lg overflow-hidden shadow-md">
+            <div className="relative h-[250px] sm:h-[300px] md:h-[350px] lg:h-[400px] rounded-lg overflow-hidden shadow-md bg-white flex items-center justify-center p-8">
               <Image
-                src="/images/window-cleaning.jpeg"
-                alt="Professional Cleaning Services"
-                fill
-                sizes="(max-width: 768px) 100vw, 50vw"
-                className="object-cover"
+                src="/images/bbps-logo2.jpg"
+                alt="Big Brother Property Solutions Logo"
+                width={500}
+                height={240}
+                className="object-contain"
+                style={{ 
+                  filter: 'drop-shadow(0 0 12px rgba(0,0,0,0.2))',
+                  maxWidth: '100%',
+                  height: 'auto'
+                }}
                 priority
               />
             </div>
