@@ -23,20 +23,24 @@ const AboutSection = () => {
           </div>
 
           <div className="w-full md:w-1/2 mt-6 md:mt-0">
-            <div className="relative h-[250px] sm:h-[300px] md:h-[350px] lg:h-[400px] rounded-lg overflow-hidden shadow-md bg-white flex items-center justify-center p-8">
-              <Image
-                src="/images/bbps-logo2.jpg"
-                alt="Big Brother Property Solutions Logo"
-                width={500}
-                height={240}
-                className="object-contain"
-                style={{ 
-                  filter: 'drop-shadow(0 0 12px rgba(0,0,0,0.2))',
-                  maxWidth: '100%',
-                  height: 'auto'
-                }}
-                priority
-              />
+            <div className="relative h-[250px] sm:h-[300px] md:h-[350px] lg:h-[400px] rounded-lg overflow-hidden shadow-md bg-gradient-to-br from-gray-900 to-gray-800 flex items-center justify-center">
+              <div className="relative" style={{ 
+                filter: 'drop-shadow(0 0 12px rgba(0,0,0,0.9))',
+                transform: 'translateZ(0)'
+              }}>
+                <Image
+                  src="/images/bbps-logo2.jpg"
+                  alt="Big Brother Property Solutions Logo"
+                  width={375}
+                  height={180}
+                  className="h-auto w-108 lg:w-120"
+                  style={{ 
+                    objectFit: 'contain',
+                    mixBlendMode: 'screen'
+                  }}
+                  priority
+                />
+              </div>
             </div>
           </div>
         </div>
