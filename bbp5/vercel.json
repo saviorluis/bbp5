@@ -22,15 +22,5 @@
       ]
     }
   ],
-  "build": {
-    "env": {
-      "NEXT_DISABLE_SOURCEMAPS": "true"
-    }
-  },
-  "buildCommand": "./vercel.build",
-  "github": {
-    "silent": true
-  },
-  "framework": "nextjs",
-  "installCommand": "npm install"
+  "framework": "nextjs"
 }
