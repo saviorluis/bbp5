@@ -575,7 +575,7 @@ const QuotePDF: React.FC<QuotePDFProps> = ({
   // Use a static path in the assets directory
   const logoPath = '/assets/logo.png';  // This will always look in the public/assets directory
   const coverPagePath = '/assets/cover-page-placeholder.jpg'; // Placeholder for the cover page
-  const capabilityStatementPath = '/BBPS Capability copy.png'; // Capability statement image
+  const capabilityStatementPath = '/images/Real Capability.png'; // Updated capability statement image
   
   // Early return for undefined data
   if (!estimateData || !formData) {
