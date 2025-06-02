@@ -27,8 +27,9 @@ const Header = () => {
     <header className={`sticky top-0 z-50 w-full transition-all duration-300 ${isScrolled ? "bg-background shadow-md" : "bg-transparent"}`}>
       <div className="container mx-auto flex items-center justify-between py-2 sm:py-3 md:py-4 px-4 md:px-8">
         <Link href="/" className="flex items-center">
-          <h1 className="text-xl sm:text-2xl md:text-3xl font-bold text-primary bg-white/80 px-3 py-1 rounded-md shadow-sm">
-            Big Brother Property Solutions
+          <h1 className="text-sm xs:text-base sm:text-xl md:text-2xl lg:text-3xl font-bold text-primary bg-white/80 px-2 sm:px-3 py-1 rounded-md shadow-sm truncate max-w-[200px] sm:max-w-none">
+            BBPS
+            <span className="hidden sm:inline"> - Property Solutions</span>
           </h1>
         </Link>
 
