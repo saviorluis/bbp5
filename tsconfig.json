@@ -22,19 +22,21 @@
         "name": "next"
       }
     ],
+    "paths": {
+      "@/*": ["./src/*"]
+    },
+    "baseUrl": ".",
     "noImplicitAny": false,
     "noImplicitReturns": false,
     "strictNullChecks": true
   },
   "include": [
+    "next-env.d.ts",
     "**/*.ts",
     "**/*.tsx",
     "**/*.js",
     "**/*.jsx",
-    ".next/types/**/*.ts",
-    "build/types/**/*.ts",
-    "next-env.d.ts",
-    "out/types/**/*.ts"
+    ".next/types/**/*.ts"
   ],
   "exclude": [
     "node_modules"
