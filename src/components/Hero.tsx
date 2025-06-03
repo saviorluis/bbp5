@@ -17,31 +17,6 @@ const Hero = () => {
         }}
       />
 
-      {/* Logo in Bottom Right - Hidden on mobile, visible from md up */}
-      <div className="absolute inset-0 pointer-events-none">
-        <div className="container mx-auto h-full relative">
-          <div className="hidden md:block absolute bottom-[20%] right-0 z-10 w-[375px] lg:w-[450px]">
-            <div className="relative" style={{ 
-              filter: 'drop-shadow(0 0 12px rgba(0,0,0,0.9))',
-              transform: 'translateZ(0)'
-            }}>
-              <Image
-                src="/images/bbps-logo2.jpg"
-                alt="Big Brother Property Solutions Logo"
-                width={375}
-                height={180}
-                className="h-auto w-full"
-                style={{ 
-                  objectFit: 'contain',
-                  mixBlendMode: 'screen'
-                }}
-                priority
-              />
-            </div>
-          </div>
-        </div>
-      </div>
-
       {/* Content */}
       <div className="absolute inset-0 bg-black/30">
         <div className="container mx-auto flex flex-col h-full justify-center px-4 md:px-8">

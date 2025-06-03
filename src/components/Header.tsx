@@ -28,8 +28,8 @@ const Header = () => {
       <div className="container mx-auto flex items-center justify-between py-2 sm:py-3 md:py-4 px-4 md:px-8">
         <Link href="/" className="flex items-center">
           <h1 className="text-sm xs:text-base sm:text-xl md:text-2xl lg:text-3xl font-bold text-primary bg-white/80 px-2 sm:px-3 py-1 rounded-md shadow-sm truncate max-w-[200px] sm:max-w-none">
-            BBPS
-            <span className="hidden sm:inline"> - Property Solutions</span>
+            Big Brother
+            <span className="hidden sm:inline"> Property Solutions</span>
           </h1>
         </Link>
 
@@ -57,7 +57,7 @@ const Header = () => {
           <SheetContent side="right" className="flex flex-col p-0">
             <div className="flex justify-between items-center p-4 border-b">
               <h1 className="text-xl font-bold text-primary">
-                BBPS
+                Big Brother Property Solutions
               </h1>
               <SheetTrigger asChild>
                 <Button variant="ghost" size="icon" className="border-none">
