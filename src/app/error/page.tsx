@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { Button } from "@/components/ui/button";
 
 export default function ErrorPage() {
   return (
@@ -13,19 +14,17 @@ export default function ErrorPage() {
         We're sorry for the inconvenience. Please try refreshing the page or return home.
       </p>
       <div className="flex flex-col sm:flex-row gap-3 sm:gap-4">
-        <button
+        <Button
           onClick={() => window.location.reload()}
-          className="inline-flex items-center justify-center rounded-md bg-blue-500 px-6 py-3 text-sm font-medium text-white hover:bg-blue-700 focus:outline-none"
+          size="lg"
+          className="bg-primary hover:bg-primary/90 text-white font-medium"
         >
           Refresh Page
-        </button>
-        <Link 
-          href="/" 
-          className="inline-flex items-center justify-center rounded-md bg-gray-500 px-6 py-3 text-sm font-medium text-white hover:bg-gray-700 focus:outline-none"
-        >
-          Return Home
-        </Link>
+        </Button>
+        <Button asChild size="lg" className="bg-secondary hover:bg-secondary/90 text-white font-medium">
+          <Link href="/">Return Home</Link>
+        </Button>
       </div>
     </div>
   );
-} 
+}

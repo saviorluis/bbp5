@@ -1,9 +1,15 @@
-import Link from "next/link";
 import { Metadata } from "next";
+import Link from "next/link";
+import Image from "next/image";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { Label } from "@/components/ui/label";
+import { Phone, Mail, MapPin, Clock } from "lucide-react";
 
 export const metadata: Metadata = {
   title: "Contact Us | Big Brother Property Solutions",
-  description: "Get in touch with Big Brother Property Solutions for all your cleaning needs.",
+  description: "Get in touch with Big Brother Property Solutions for all your cleaning needs. Request a quote or ask questions about our services.",
 };
 
 export default function ContactPage() {
@@ -15,65 +21,44 @@ export default function ContactPage() {
         <div>
           <h2 className="text-2xl font-bold mb-6">Get In Touch</h2>
           <p className="text-lg mb-8">
-            Have questions about our services or want to request a quote? Fill out the form below.
+            Have questions about our services or want to request a quote? Fill out the form and our team will get back to you as soon as possible.
           </p>
           
           <form className="space-y-6">
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div className="space-y-2">
-                <label htmlFor="firstName" className="block text-sm font-medium">First Name</label>
-                <input 
-                  id="firstName" 
-                  className="w-full p-2 border border-gray-300 rounded-md" 
-                  placeholder="Your first name" 
-                />
+                <Label htmlFor="firstName">First Name</Label>
+                <Input id="firstName" placeholder="Your first name" />
               </div>
               <div className="space-y-2">
-                <label htmlFor="lastName" className="block text-sm font-medium">Last Name</label>
-                <input 
-                  id="lastName" 
-                  className="w-full p-2 border border-gray-300 rounded-md" 
-                  placeholder="Your last name" 
-                />
+                <Label htmlFor="lastName">Last Name</Label>
+                <Input id="lastName" placeholder="Your last name" />
               </div>
             </div>
             
             <div className="space-y-2">
-              <label htmlFor="email" className="block text-sm font-medium">Email</label>
-              <input 
-                id="email" 
-                type="email" 
-                className="w-full p-2 border border-gray-300 rounded-md" 
-                placeholder="Your email address" 
-              />
+              <Label htmlFor="email">Email</Label>
+              <Input id="email" type="email" placeholder="Your email address" />
             </div>
             
             <div className="space-y-2">
-              <label htmlFor="phone" className="block text-sm font-medium">Phone</label>
-              <input 
-                id="phone" 
-                type="tel" 
-                className="w-full p-2 border border-gray-300 rounded-md" 
-                placeholder="Your phone number" 
-              />
+              <Label htmlFor="phone">Phone</Label>
+              <Input id="phone" type="tel" placeholder="Your phone number" />
             </div>
             
             <div className="space-y-2">
-              <label htmlFor="message" className="block text-sm font-medium">Message</label>
-              <textarea 
-                id="message" 
-                className="w-full p-2 border border-gray-300 rounded-md" 
-                rows={5} 
-                placeholder="Your message"
-              />
+              <Label htmlFor="subject">Subject</Label>
+              <Input id="subject" placeholder="What is this regarding?" />
             </div>
             
-            <button 
-              type="submit" 
-              className="w-full bg-blue-500 hover:bg-blue-700 text-white py-2 px-4 rounded"
-            >
+            <div className="space-y-2">
+              <Label htmlFor="message">Message</Label>
+              <Textarea id="message" placeholder="Your message" rows={5} />
+            </div>
+            
+            <Button type="submit" className="w-full bg-secondary hover:bg-secondary/90">
               Send Message
-            </button>
+            </Button>
           </form>
         </div>
         
@@ -82,30 +67,47 @@ export default function ContactPage() {
           
           <div className="bg-gray-50 p-8 rounded-lg shadow-sm mb-8">
             <div className="space-y-6">
-              <div className="flex items-start gap-4">
-                <div className="flex-shrink-0 mt-1">
-                  <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-blue-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
-                  </svg>
-                </div>
-                <div>
-                  <h3 className="font-semibold text-lg">Phone</h3>
-                  <a href="tel:+13363654052" className="text-gray-700 hover:text-blue-500">336-365-4052</a>
-                </div>
-              </div>
+              <ContactItem 
+                icon={<Phone className="h-6 w-6 text-secondary" />}
+                title="Phone"
+                content="336-365-4052"
+                link="tel:+13363654052"
+              />
               
-              <div className="flex items-start gap-4">
-                <div className="flex-shrink-0 mt-1">
-                  <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-blue-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
-                  </svg>
-                </div>
-                <div>
-                  <h3 className="font-semibold text-lg">Email</h3>
-                  <a href="mailto:ncbbps@gmail.com" className="text-gray-700 hover:text-blue-500">ncbbps@gmail.com</a>
-                </div>
-              </div>
+              <ContactItem 
+                icon={<Mail className="h-6 w-6 text-secondary" />}
+                title="Email"
+                content="ncbbps@gmail.com"
+                link="mailto:ncbbps@gmail.com"
+              />
+              
+              <ContactItem 
+                icon={<MapPin className="h-6 w-6 text-secondary" />}
+                title="Office"
+                content="1200 Eastchester Dr, High Point, NC Ste. 203"
+                link="https://maps.google.com/?q=1200+Eastchester+Dr,+High+Point,+NC"
+              />
+              
+              <ContactItem 
+                icon={<Clock className="h-6 w-6 text-secondary" />}
+                title="Hours"
+                content="Monday-Friday: 7am-5pm"
+              />
             </div>
+          </div>
+          
+          <div className="rounded-lg overflow-hidden h-80 relative">
+            <iframe 
+              src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3222.593456090756!2d-80.0110233!3d35.9944444!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x8853e79c5e8d6563%3A0x2a3b1572574473ef!2s1200%20Eastchester%20Dr%2C%20High%20Point%2C%20NC%2027265!5e0!3m2!1sen!2sus!4v1712662626133!5m2!1sen!2sus" 
+              width="100%" 
+              height="320" 
+              style={{ border: 0 }} 
+              allowFullScreen 
+              loading="lazy" 
+              referrerPolicy="no-referrer-when-downgrade"
+              title="Office Location"
+              className="absolute inset-0"
+            />
           </div>
         </div>
       </div>
@@ -115,9 +117,43 @@ export default function ContactPage() {
         <p className="text-lg mb-6 max-w-2xl mx-auto">
           Request a quote for our professional cleaning services today.
         </p>
-        <Link href="/get-quote" className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
-          Get a Quote
-        </Link>
+        <Button asChild size="lg" className="bg-secondary hover:bg-secondary/90">
+          <Link href="/get-quote">Get a Quote</Link>
+        </Button>
+      </div>
+    </div>
+  );
+}
+
+interface ContactItemProps {
+  icon: React.ReactNode;
+  title: string;
+  content: string;
+  link?: string;
+}
+
+function ContactItem({ icon, title, content, link }: ContactItemProps) {
+  const ContentWrapper = ({ children }: { children: React.ReactNode }) => {
+    if (link) {
+      return (
+        <a href={link} className="hover:text-secondary transition-colors">
+          {children}
+        </a>
+      );
+    }
+    return <>{children}</>;
+  };
+
+  return (
+    <div className="flex items-start gap-4">
+      <div className="flex-shrink-0 mt-1">
+        {icon}
+      </div>
+      <div>
+        <h3 className="font-semibold text-lg">{title}</h3>
+        <ContentWrapper>
+          <p className="text-gray-700">{content}</p>
+        </ContentWrapper>
       </div>
     </div>
   );
