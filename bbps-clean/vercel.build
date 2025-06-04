@@ -1,8 +1,13 @@
 #!/bin/bash
-set -e
 
-echo "Installing required dependencies..."
-npm install --no-save --no-package-lock
+# Ensure we're in the correct directory
+cd "$(dirname "$0")"
+
+# Install dependencies
+npm install
+
+# Run the build
+npm run build
 
 # Create static build directory
 echo "Creating static build directory..."

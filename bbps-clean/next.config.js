@@ -63,13 +63,26 @@ const nextConfig = {
   // Experimental features
   experimental: {
     optimizePackageImports: ['lucide-react'],
+    scrollRestoration: true,
   },
   
   // Output static files for deployment
   output: 'export',
-  distDir: 'out',
+  distDir: '.next',
   trailingSlash: true,
   poweredByHeader: false,
+  webpack: (config, { isServer }) => {
+    // Fixes npm packages that depend on `fs` module
+    if (!isServer) {
+      config.resolve.fallback = {
+        fs: false,
+        path: false,
+      };
+    }
+    return config;
+  },
+  // Ensure paths are resolved correctly
+  basePath: '',
 };
 
 module.exports = nextConfig;
