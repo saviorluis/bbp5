@@ -573,7 +573,7 @@ const QuotePDF: React.FC<QuotePDFProps> = ({
   const quoteCounter = getQuoteCounter();
   
   // Use a static path in the assets directory
-  const logoPath = '/assets/logo.png';  // This will always look in the public/assets directory
+  const logoPath = '/images/bbps-logo2.jpg';  // Updated to use the same logo as the rest of the site
   const coverPagePath = '/assets/cover-page-placeholder.jpg'; // Placeholder for the cover page
   const capabilityStatementPath = '/images/Real Capability.png'; // Updated capability statement image
   
