@@ -46,15 +46,15 @@ const nextConfig = {
   output: 'standalone',
   distDir: '.next',
   poweredByHeader: false,
-  // Headers configuration for CSP
+  // Headers configuration for CSP - more permissive for calculator functionality
   async headers() {
     return [
       {
-        source: '/(.*)',
+        source: '/:path*',
         headers: [
           {
             key: 'Content-Security-Policy',
-            value: "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://vercel.live; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https://*; connect-src 'self' https://* wss://*; frame-src 'self' https://vercel.live;"
+            value: "default-src 'self' 'unsafe-inline' 'unsafe-eval'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://vercel.live https://*.vercel.app https://*.vercel.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdnjs.cloudflare.com; font-src 'self' https://fonts.gstatic.com https://cdnjs.cloudflare.com; img-src 'self' data: blob: https://*; connect-src 'self' https://* wss://* ws://*; frame-src 'self' https://vercel.live; object-src 'none'; base-uri 'self';"
           },
           {
             key: 'X-Content-Type-Options',
@@ -63,10 +63,6 @@ const nextConfig = {
           {
             key: 'X-Frame-Options',
             value: 'SAMEORIGIN'
-          },
-          {
-            key: 'X-XSS-Protection',
-            value: '1; mode=block'
           }
         ],
       },
