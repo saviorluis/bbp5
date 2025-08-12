@@ -1,73 +1,107 @@
 import { ProjectType, CleaningType } from './types';
 
+// ===================== CORE PRICING CONSTANTS =====================
+
 // Base rate per square foot (in dollars)
 export const BASE_RATE_PER_SQFT = 0.18;
 
-// Project type multipliers
+// VCT (Vinyl Composition Tile) stripping and waxing tiered pricing
+// Small jobs (< 1,000 sq ft): $2.20/sq ft - higher overhead per sq ft
+// Medium jobs (1,000-5,000 sq ft): $2.20 scaling down to $1.50 based on volume
+// Large jobs (> 5,000 sq ft): $1.50/sq ft - volume discount
+export const getVCTCostPerSqFt = (vctSquareFootage: number): number => {
+  if (vctSquareFootage < 1000) {
+    return 2.20; // Small job premium
+  } else if (vctSquareFootage <= 5000) {
+    // Linear interpolation between $2.20 and $1.50 for medium jobs
+    const ratio = (vctSquareFootage - 1000) / (5000 - 1000);
+    return 2.20 - (ratio * 0.70); // $2.20 down to $1.50
+  } else {
+    return 1.50; // Large job volume discount
+  }
+};
+
+// Sales tax rate
+export const SALES_TAX_RATE = 0.07;
+
+// ===================== PROJECT TYPE MULTIPLIERS =====================
+
 export const PROJECT_TYPE_MULTIPLIERS: Record<ProjectType, number> = {
-  restaurant: 1.3,
-  medical: 1.4,
+  restaurant: 1.5,
+  fast_food: 1.2,
+  medical: 1.6,
+  retail: 1.0,
   office: 1.0,
-  retail: 1.2,
   industrial: 1.3,
   educational: 1.25,
   hotel: 1.35,
   jewelry_store: 1.4,
-  apartment: 1.1,
-  warehouse: 1.2,
-  dormitory: 1.2,
   grocery_store: 1.3,
   yoga_studio: 1.15,
   kids_fitness: 1.25,
-  fast_food: 1.3,
   bakery: 1.35,
+  interactive_toy_store: 1.45,
+  church: 1.2,
+  arcade: 1.3,
   coffee_shop: 1.25,
+  fire_station: 1.4,
+  apartment: 1.1,
+  warehouse: 1.2,
+  dormitory: 1.2,
   dental_office: 1.4,
   pet_resort: 1.4,
   beauty_store: 1.3,
-  interactive_toy_store: 1.45,
   mailroom: 1.25,
-  church: 1.35,
   residential: 1.0,
   car_wash: 1.2,
-  construction_trailor: 1.1
-};
+  construction_trailor: 1.1,
+  other: 1.0
+} as const;
 
-// Cleaning type multipliers
+// ===================== CLEANING TYPE CONSTANTS =====================
+
 export const CLEANING_TYPE_MULTIPLIERS: Record<CleaningType, number> = {
   rough: 0.8,
   final: 1.0,
   rough_final: 1.2,
   rough_final_touchup: 1.45,
   pressure_washing_only: 1.0,
+  vct_only: 1.0,
   window_cleaning_only: 1.0
-};
+} as const;
 
-// Cleaning type descriptions
 export const CLEANING_TYPE_DESCRIPTIONS: Record<CleaningType, string> = {
   rough: "First stage cleaning that focuses on debris removal and basic surface cleaning (80% of standard rate).",
   final: "Complete detailed cleaning of all surfaces and areas (standard rate).",
   rough_final: "Combination of first stage rough clean followed by final clean (120% of standard rate).",
-  rough_final_touchup: "Comprehensive package including rough clean, final clean, and touchup service (145% of standard rate).",
-  pressure_washing_only: "Specialized exterior pressure washing services only - no interior cleaning included. No minimum requirements - available for any area size.",
-  window_cleaning_only: "Specialized window cleaning services only - no interior cleaning included. No minimum requirements - available for any number of windows."
-};
+  rough_final_touchup: "Complete three-stage process: rough, final, and touch-up clean (145% of standard rate).",
+  pressure_washing_only: "Professional pressure washing services with appropriate equipment and chemicals (standard rate).",
+  vct_only: "Professional VCT stripping, waxing, and buffing services for vinyl composition tile flooring (standard rate).",
+  window_cleaning_only: "Professional window cleaning services including standard and high-access windows (standard rate)."
+} as const;
 
-// Cleaning type time multipliers (how much longer each type takes)
 export const CLEANING_TYPE_TIME_MULTIPLIERS: Record<CleaningType, number> = {
   rough: 0.7,
   final: 1.0,
   rough_final: 1.5,
   rough_final_touchup: 1.8,
   pressure_washing_only: 1.0,
+  vct_only: 1.0,
   window_cleaning_only: 1.0
-};
+} as const;
 
-// VCT (Vinyl Composition Tile) additional cost per square foot
+// ===================== TRAVEL AND LOGISTICS =====================
+
+// New hourly-based travel fee structure
+export const TRAVEL_FEES = {
+  BASE_FEE: 100, // Within 1 hour: $100
+  HOURLY_INCREMENT: 100, // Add $100 for each additional hour
+  AVERAGE_SPEED_MPH: 60 // Average driving speed for time calculations
+} as const;
+
+// Legacy constants (kept for backward compatibility during transition)
 export const VCT_COST_PER_SQFT = 0.15;
-
-// Travel cost per mile (accounting for round trip)
-export const TRAVEL_COST_PER_MILE = 0.60; // Adjusted mileage rate for balanced pricing
+export const TRAVEL_COST_PER_MILE = 0.60;
 
 // Hotel cost per night per room
 export const HOTEL_COST_PER_NIGHT = 175;
@@ -98,16 +132,42 @@ export const URGENCY_MULTIPLIERS: Record<number, number> = {
   10: 1.40 // Extremely urgent
 };
 
-// Helper function to get recommended number of cleaners based on square footage
+// ===================== PERFORMANCE OPTIMIZED FUNCTIONS =====================
+
+// Memoized function for recommended cleaners
+const CLEANER_THRESHOLDS = [
+  { sqft: 2000, cleaners: 2 },
+  { sqft: 5000, cleaners: 3 },
+  { sqft: 10000, cleaners: 4 },
+  { sqft: 20000, cleaners: 6 },
+  { sqft: 40000, cleaners: 8 },
+  { sqft: 60000, cleaners: 10 },
+  { sqft: 80000, cleaners: 12 }
+] as const;
+
 export function getRecommendedCleaners(squareFootage: number): number {
-  if (squareFootage < 2000) return 2;
-  if (squareFootage < 5000) return 3;
-  if (squareFootage < 10000) return 4;
-  if (squareFootage < 20000) return 6;
-  if (squareFootage < 40000) return 8;
-  if (squareFootage < 60000) return 10;
-  if (squareFootage < 80000) return 12;
+  for (const threshold of CLEANER_THRESHOLDS) {
+    if (squareFootage < threshold.sqft) return threshold.cleaners;
+  }
   return 15;
+}
+
+// Convert distance to drive time in hours (one way)
+export function getDriveTimeHours(distanceMiles: number): number {
+  return distanceMiles / TRAVEL_FEES.AVERAGE_SPEED_MPH;
+}
+
+// Calculate hourly-based travel fee
+export function calculateHourlyTravelFee(distanceMiles: number): number {
+  const driveTimeHours = getDriveTimeHours(distanceMiles);
+  
+  if (driveTimeHours <= 1) {
+    return TRAVEL_FEES.BASE_FEE;
+  }
+  
+  // Round up to next hour for billing purposes
+  const totalHours = Math.ceil(driveTimeHours);
+  return TRAVEL_FEES.BASE_FEE + ((totalHours - 1) * TRAVEL_FEES.HOURLY_INCREMENT);
 }
 
 // Additional cost per square foot for VCT flooring
@@ -116,38 +176,42 @@ export const VCT_ADDITIONAL_COST = 0.15;
 // Gas mileage assumptions (miles per gallon)
 export const AVERAGE_MPG = 25;
 
-// Productivity rates (square feet per hour per cleaner)
+// ===================== PRODUCTIVITY RATES =====================
+
 export const PRODUCTIVITY_RATES: Record<ProjectType, number> = {
-  restaurant: 450, // More detailed cleaning for health standards
-  medical: 400,    // Strict standards require more time
-  office: 600,
+  restaurant: 450,
+  fast_food: 450,
+  medical: 400,
   retail: 550,
+  office: 600,
   industrial: 750,
   educational: 500,
-  hotel: 425,      // More detailed cleaning of guest rooms
-  jewelry_store: 350,  // Requires meticulous detail work
-  apartment: 550,     // Similar to residential cleaning but larger scale
-  warehouse: 850,     // Large open spaces, more efficient cleaning
-  dormitory: 500,      // Similar to hotel but with common areas and shared spaces
+  hotel: 425,
+  jewelry_store: 350,
   grocery_store: 480,
-  yoga_studio: 500,    // Similar to fitness centers, focus on sanitization
-  kids_fitness: 450,   // Extra attention to safety and sanitization
-  fast_food: 450,      // Similar to restaurants, focused on food service areas
-  bakery: 430,         // Detailed cleaning of bakery equipment and food prep areas
-  coffee_shop: 460,    // Specialized cleaning for coffee equipment and customer seating areas
-  dental_office: 380,  // Highly detailed cleaning requiring specialized protocols and disinfection
-  pet_resort: 400,      // Thorough sanitization for animal areas and specialized cleaning
-  beauty_store: 420,    // Detailed cleaning of product displays and testing stations
-  interactive_toy_store: 380,    // Interactive play areas and complex environments require detailed cleaning
-  mailroom: 520,         // Specialized cleaning for shipping/mailing areas with focus on dust control
-  church: 430,          // Large open spaces with detailed cleaning of pews, altars, and religious fixtures
+  yoga_studio: 500,
+  kids_fitness: 450,
+  bakery: 430,
+  interactive_toy_store: 380,
+  church: 500,
+  arcade: 450,
+  coffee_shop: 440,
+  fire_station: 550,
+  apartment: 550,
+  warehouse: 850,
+  dormitory: 500,
+  dental_office: 380,
+  pet_resort: 400,
+  beauty_store: 420,
+  mailroom: 520,
   residential: 500,
   car_wash: 500,
-  construction_trailor: 400
-};
+  construction_trailor: 400,
+  other: 500
+} as const;
 
-// Markup percentage (1.5x = 50% markup)
-export const MARKUP_PERCENTAGE = 0.5;
+// Markup percentage (30% professional markup)
+export const MARKUP_PERCENTAGE = 0.3;
 
 // Hotel markup percentage (50% markup on hotel costs)
 export const HOTEL_MARKUP_PERCENTAGE = 0.5;
@@ -158,15 +222,43 @@ export const calculateUrgencyMultiplier = (urgencyLevel: number): number => {
   return (urgencyLevel - 1) * (0.3 / 9);
 };
 
-// Window cleaning costs
-export const WINDOW_CLEANING_COST_PER_WINDOW = 18; // Base cost per standard window
-export const WINDOW_CLEANING_LARGE_WINDOW_MULTIPLIER = 1.6; // Multiplier for large windows
-export const WINDOW_CLEANING_HIGH_ACCESS_MULTIPLIER = 2.2; // Multiplier for windows requiring lifts/ladders
-export const WINDOW_CLEANING_WINDOWS_PER_HOUR = 5; // Average windows cleaned per hour
+// ===================== SPECIALTY SERVICES =====================
 
-// Display case cleaning costs
-export const DISPLAY_CASE_CLEANING_COST = 30; // Cost per display case
-export const DISPLAY_CASE_TIME_PER_UNIT = 0.6; // Hours per display case
+// Pressure Washing
+export const PRESSURE_WASHING = {
+  COST_PER_SQFT: 0.40,
+  EQUIPMENT_RENTAL_PER_DAY: 180,
+  PRODUCTIVITY_SQFT_PER_HOUR: 500,
+  WORK_HOURS_PER_DAY: 8
+} as const;
+
+// Window Cleaning
+export const WINDOW_CLEANING = {
+  COST_PER_WINDOW: 18,
+  LARGE_WINDOW_MULTIPLIER: 1.6,
+  HIGH_ACCESS_MULTIPLIER: 2.2,
+  WINDOWS_PER_HOUR: 5,
+  MAX_STANDARD_WINDOWS: 100,
+  MAX_LARGE_WINDOWS: 50,
+  MAX_HIGH_ACCESS_WINDOWS: 25,
+  MAX_TOTAL_HOURS: 40
+} as const;
+
+// Legacy constants for backward compatibility
+export const WINDOW_CLEANING_COST_PER_WINDOW = 18;
+export const WINDOW_CLEANING_LARGE_WINDOW_MULTIPLIER = 1.6;
+export const WINDOW_CLEANING_HIGH_ACCESS_MULTIPLIER = 2.2;
+export const WINDOW_CLEANING_WINDOWS_PER_HOUR = 5;
+
+// Display Case Cleaning
+export const DISPLAY_CASE = {
+  COST_PER_CASE: 30,
+  TIME_PER_CASE_HOURS: 0.6
+} as const;
+
+// Legacy constants for backward compatibility
+export const DISPLAY_CASE_CLEANING_COST = 30;
+export const DISPLAY_CASE_TIME_PER_UNIT = 0.6;
 
 export const SCOPE_OF_WORK: { [key: string]: string } = {
   restaurant: "Final Cleaning includes:\n" +

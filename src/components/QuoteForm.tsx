@@ -98,9 +98,9 @@ const QuoteForm = () => {
       <div className="container mx-auto">
         <div className="max-w-3xl mx-auto">
           <div className="text-center mb-10">
-            <h2 className="text-2xl md:text-3xl font-bold mb-3 text-primary">GET A FREE QUOTE</h2>
+            <h2 className="text-2xl md:text-3xl font-bold mb-3 text-primary">GET A FREE REFERENCE QUOTE</h2>
             <p className="text-muted-foreground">
-              Fill out the form below and we'll get back to you as soon as possible.
+              Get a quick reference price estimate for your cleaning project. For detailed janitorial contract pricing, use the Professional Calculator below.
             </p>
             {/* This comment will be replaced with a link to the estimator when it's ready */}
             {/* <p className="mt-4 text-sm">
@@ -109,14 +109,15 @@ const QuoteForm = () => {
               </a>
             </p> */}
             
-            {/* Admin access button */}
+            {/* Professional Calculator access button */}
             <div className="mt-4">
               <button 
-                className="text-xs text-gray-400 hover:text-gray-600 hover:underline" 
+                className="inline-flex items-center px-3 py-2 text-sm font-medium text-blue-600 bg-blue-50 hover:bg-blue-100 rounded-md transition-colors" 
                 onClick={() => setShowPasswordModal(true)}
               >
-                Admin Access
+                🧮 Professional Calculator Access
               </button>
+              <p className="text-xs text-gray-500 mt-1">For janitorial contracts & detailed estimates</p>
             </div>
           </div>
 
@@ -124,8 +125,8 @@ const QuoteForm = () => {
           {showPasswordModal && (
             <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
               <div className="bg-white p-6 rounded-lg shadow-lg w-80">
-                <h3 className="text-lg font-semibold mb-4">Admin Access</h3>
-                <p className="text-sm text-gray-600 mb-4">Enter the admin password to access estimator features.</p>
+                <h3 className="text-lg font-semibold mb-4">Professional Calculator Access</h3>
+                <p className="text-sm text-gray-600 mb-4">Enter the password to access the professional pricing calculator for detailed janitorial contract estimates.</p>
                 
                 <Input
                   type="password"
@@ -160,8 +161,8 @@ const QuoteForm = () => {
             <div className="bg-amber-50 border border-amber-200 p-4 mb-8 rounded-md">
               <div className="flex justify-between items-center">
                 <div>
-                  <h3 className="font-medium text-amber-800">Admin Mode Active</h3>
-                  <p className="text-sm text-amber-700">You now have access to the full estimator.</p>
+                  <h3 className="font-medium text-amber-800">Professional Calculator Access Granted</h3>
+                  <p className="text-sm text-amber-700">You can now access the professional pricing calculator for detailed estimates.</p>
                 </div>
                 <div className="flex gap-2">
                   <Button 
@@ -169,7 +170,7 @@ const QuoteForm = () => {
                     className="text-xs"
                     onClick={() => window.location.href = '/estimate'} 
                   >
-                    Open Estimator
+                    Open Professional Calculator
                   </Button>
                   <Button 
                     variant="outline" 
@@ -180,7 +181,7 @@ const QuoteForm = () => {
                       window.dispatchEvent(new Event('storage'));
                     }}
                   >
-                    Exit Admin Mode
+                    Exit Professional Mode
                   </Button>
                 </div>
               </div>
