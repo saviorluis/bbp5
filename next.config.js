@@ -54,7 +54,7 @@ const nextConfig = {
         headers: [
           {
             key: 'Content-Security-Policy',
-            value: "default-src 'self' 'unsafe-inline' 'unsafe-eval'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://vercel.live https://*.vercel.app https://*.vercel.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdnjs.cloudflare.com; font-src 'self' https://fonts.gstatic.com https://cdnjs.cloudflare.com; img-src 'self' data: blob: https://*; connect-src 'self' https://* wss://* ws://*; frame-src 'self' https://vercel.live; object-src 'none'; base-uri 'self';"
+            value: "default-src 'self' 'unsafe-inline' 'unsafe-eval'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://vercel.live https://*.vercel.app https://*.vercel.com https://*.google.com https://*.gstatic.com https://docs.google.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdnjs.cloudflare.com https://*.google.com https://*.gstatic.com; font-src 'self' https://fonts.gstatic.com https://cdnjs.cloudflare.com https://*.gstatic.com; img-src 'self' data: blob: https://* https://*.google.com https://*.gstatic.com; connect-src 'self' https://* wss://* ws://*; frame-src 'self' https://vercel.live https://docs.google.com https://*.google.com; object-src 'none'; base-uri 'self';"
           },
           {
             key: 'X-Content-Type-Options',
