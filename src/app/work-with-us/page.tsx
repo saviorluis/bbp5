@@ -1,10 +1,6 @@
 import { Metadata } from "next";
 import Link from "next/link";
-import Image from "next/image";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
-import { Label } from "@/components/ui/label";
 import { CheckCircle2 } from "lucide-react";
 
 export const metadata: Metadata = {
@@ -58,50 +54,47 @@ export default function WorkWithUsPage() {
         </div>
         
         <div>
-          <h2 className="text-2xl font-bold mb-6">Apply Now</h2>
+          <h2 className="text-2xl font-bold mb-6">Apply Now / Aplicar Ahora</h2>
           <div className="bg-gray-50 p-8 rounded-lg shadow-sm">
-            <form className="space-y-6">
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <Label htmlFor="firstName">First Name</Label>
-                  <Input id="firstName" placeholder="Your first name" />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="lastName">Last Name</Label>
-                  <Input id="lastName" placeholder="Your last name" />
-                </div>
+            <div className="text-center mb-6">
+              <p className="text-lg mb-4">
+                Complete our comprehensive application form below to join our team!
+              </p>
+              <p className="text-base text-gray-600 mb-6">
+                <em>¡Complete nuestro formulario de aplicación integral a continuación para unirse a nuestro equipo!</em>
+              </p>
+              
+              {/* Google Form Embed - Replace with your actual Google Form URL */}
+              <div className="w-full h-[800px] border rounded-lg overflow-hidden">
+                <iframe
+                  src="https://docs.google.com/forms/d/e/YOUR_FORM_ID/viewform?embedded=true"
+                  width="100%"
+                  height="800"
+                  frameBorder="0"
+                  marginHeight={0}
+                  marginWidth={0}
+                  title="BBPS Job Application Form"
+                >
+                  Loading…
+                </iframe>
               </div>
               
-              <div className="space-y-2">
-                <Label htmlFor="email">Email</Label>
-                <Input id="email" type="email" placeholder="Your email address" />
+              {/* Fallback link for mobile or if iframe doesn't work */}
+              <div className="mt-4 text-center">
+                <p className="text-sm text-gray-600 mb-2">
+                  Having trouble with the form above? Open it in a new window:
+                </p>
+                <Button asChild variant="outline" className="border-secondary text-secondary hover:bg-secondary hover:text-white">
+                  <Link 
+                    href="https://docs.google.com/forms/d/e/YOUR_FORM_ID/viewform" 
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    Open Application Form
+                  </Link>
+                </Button>
               </div>
-              
-              <div className="space-y-2">
-                <Label htmlFor="phone">Phone</Label>
-                <Input id="phone" type="tel" placeholder="Your phone number" />
-              </div>
-              
-              <div className="space-y-2">
-                <Label htmlFor="position">Position Applying For</Label>
-                <Input id="position" placeholder="e.g., Cleaning Technician" />
-              </div>
-              
-              <div className="space-y-2">
-                <Label htmlFor="experience">Relevant Experience</Label>
-                <Textarea id="experience" placeholder="Tell us about your relevant experience" rows={4} />
-              </div>
-              
-              <div className="space-y-2">
-                <Label className="block mb-2">Resume (Optional)</Label>
-                <Input id="resume" type="file" className="w-full" />
-                <p className="text-xs text-gray-500 mt-1">PDF, DOC, or DOCX files only (max 5MB)</p>
-              </div>
-              
-              <Button type="submit" className="w-full bg-secondary hover:bg-secondary/90">
-                Submit Application
-              </Button>
-            </form>
+            </div>
           </div>
         </div>
       </div>
