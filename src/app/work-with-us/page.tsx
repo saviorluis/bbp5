@@ -55,46 +55,23 @@ export default function WorkWithUsPage() {
         
         <div>
           <h2 className="text-2xl font-bold mb-6">Apply Now / Aplicar Ahora</h2>
-          <div className="bg-gray-50 p-8 rounded-lg shadow-sm">
-            <div className="text-center mb-6">
-              <p className="text-lg mb-4">
-                Complete our comprehensive application form below to join our team!
-              </p>
-              <p className="text-base text-gray-600 mb-6">
-                <em>¡Complete nuestro formulario de aplicación integral a continuación para unirse a nuestro equipo!</em>
-              </p>
-              
-              {/* Google Form Embed - Replace with your actual Google Form URL */}
-              <div className="w-full h-[800px] border rounded-lg overflow-hidden">
-                <iframe
-                  src="https://docs.google.com/forms/d/e/YOUR_FORM_ID/viewform?embedded=true"
-                  width="100%"
-                  height="800"
-                  frameBorder="0"
-                  marginHeight={0}
-                  marginWidth={0}
-                  title="BBPS Job Application Form"
-                >
-                  Loading…
-                </iframe>
-              </div>
-              
-              {/* Fallback link for mobile or if iframe doesn't work */}
-              <div className="mt-4 text-center">
-                <p className="text-sm text-gray-600 mb-2">
-                  Having trouble with the form above? Open it in a new window:
-                </p>
-                <Button asChild variant="outline" className="border-secondary text-secondary hover:bg-secondary hover:text-white">
-                  <Link 
-                    href="https://docs.google.com/forms/d/e/YOUR_FORM_ID/viewform" 
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >
-                    Open Application Form
-                  </Link>
-                </Button>
-              </div>
-            </div>
+          <div className="bg-gray-50 p-8 rounded-lg shadow-sm text-center">
+            <p className="text-lg mb-4">
+              Complete our comprehensive application form to join our team!
+            </p>
+            <p className="text-base text-gray-600 mb-6">
+              <em>¡Complete nuestro formulario de aplicación integral para unirse a nuestro equipo!</em>
+            </p>
+            
+            <Button asChild size="lg" className="bg-secondary hover:bg-secondary/90">
+              <Link 
+                href="YOUR_GOOGLE_FORM_URL"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                Apply Now / Aplicar Ahora
+              </Link>
+            </Button>
           </div>
         </div>
       </div>
